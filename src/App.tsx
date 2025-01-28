@@ -22,10 +22,10 @@ function App() {
             <a href="#features" className="hover:text-white/80 transition-colors px-4">Features</a>
             <a href="#capabilities" className="hover:text-white/80 transition-colors px-4">Capabilities</a>
             <div className="h-4 w-px bg-white/20" />
-            <a href="https://github.com" className="hover:text-white/80 transition-colors p-2" aria-label="GitHub">
+            <a href="https://github.com/Cyanisxyz/Cyanis" className="hover:text-white/80 transition-colors p-2" aria-label="GitHub">
               <Github className="w-4 h-4" />
             </a>
-            <a href="https://twitter.com" className="hover:text-white/80 transition-colors p-2" aria-label="X (Twitter)">
+            <a href="https://x.com/cyanisxyz" className="hover:text-white/80 transition-colors p-2" aria-label="X (Twitter)">
               <Twitter className="w-4 h-4" />
             </a>
           </div>
