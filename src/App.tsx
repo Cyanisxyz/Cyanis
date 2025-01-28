@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Binary, Code, Terminal, ChevronRight, Github, Twitter } from 'lucide-react';
+import { Cpu, Binary, Code, Terminal, ChevronRight, Github, Twitter, MessageSquare, Sparkles, Search, Zap, Settings, Brain } from 'lucide-react';
 
 function App() {
   return (
@@ -97,32 +97,60 @@ function App() {
               <Terminal className="w-8 h-8" />
               <h2 className="text-3xl font-orbitron font-bold text-glow">System Capabilities</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <h3 className="text-2xl font-semibold mb-4">Core Functions</h3>
-                <ul className="space-y-4">
-                  {[
-                    "Advanced algorithmic problem solving",
-                    "Real-time code optimization",
-                    "Natural language processing",
-                    "System architecture design",
-                    "Automated testing and debugging",
-                    "Technical documentation generation"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-white/40 rounded-full" />
-                      <span className="text-white/70">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="space-y-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+                <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center">
+                  <MessageSquare className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Conversational Expertise</h3>
+                <p className="text-white/70">
+                  Engage in natural, human-like conversations across a wide range of topics, from casual chats to technical discussions.
+                </p>
               </div>
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80"
-                  alt="Advanced Technology Visualization"
-                  className="rounded-2xl object-cover w-full h-full"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-2xl" />
+              <div className="space-y-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+                <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Creative Generation</h3>
+                <p className="text-white/70">
+                  CYANIS excels at drafting text, generating ideas, writing code, or assisting with creative content like stories, scripts, or essays.
+                </p>
+              </div>
+              <div className="space-y-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+                <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center">
+                  <Search className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Information Retrieval</h3>
+                <p className="text-white/70">
+                  Quickly find accurate answers and summarize complex topics, helping you stay informed and make decisions faster.
+                </p>
+              </div>
+              <div className="space-y-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+                <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Task Efficiency</h3>
+                <p className="text-white/70">
+                  CYANIS simplifies daily tasks like brainstorming, outlining projects, and troubleshooting issues.
+                </p>
+              </div>
+              <div className="space-y-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+                <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center">
+                  <Settings className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Adaptability</h3>
+                <p className="text-white/70">
+                  Whether you need a tutor, a collaborator, or just someone to bounce ideas off, CYANIS adjusts to your needs effortlessly.
+                </p>
+              </div>
+              <div className="space-y-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+                <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center">
+                  <Brain className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Continuous Learning</h3>
+                <p className="text-white/70">
+                  CYANIS evolves with usage, learning from your preferences to offer more personalized and effective support.
+                </p>
               </div>
             </div>
           </div>
