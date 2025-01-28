@@ -35,39 +35,43 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
 
-        <footer className="max-w-7xl mx-auto px-6 py-16 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-start">
-            <div className="space-y-4 md:w-1/2">
-              <Link to="/" className="text-xl font-orbitron font-bold">CYANIS</Link>
-              <p className="text-white/60 max-w-md">
-                An advanced AI platform revolutionizing human-machine interactions—bridging intelligence and innovation.
-              </p>
-              <div className="flex space-x-4">
-                <a href="https://github.com/Cyanisxyz/Cyanis" className="text-white/60 hover:text-white transition-colors">
-                  <Github className="w-5 h-5" />
-                </a>
-                <a href="https://x.com/cyanisxyz" className="text-white/60 hover:text-white transition-colors">
-                  <Twitter className="w-5 h-5" />
-                </a>
+        <footer className="w-full border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="flex flex-col md:flex-row justify-between items-start">
+              <div className="space-y-4 md:w-1/2">
+                <Link to="/" className="text-xl font-orbitron font-bold">CYANIS</Link>
+                <p className="text-white/60 max-w-md">
+                  An advanced AI platform revolutionizing human-machine interactions—bridging intelligence and innovation.
+                </p>
+                <div className="flex space-x-4">
+                  <a href="https://github.com/Cyanisxyz/Cyanis" className="text-white/60 hover:text-white transition-colors">
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a href="https://x.com/cyanisxyz" className="text-white/60 hover:text-white transition-colors">
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-8 md:mt-0 space-y-4">
+                <ul className="space-y-2">
+                  <li>
+                    <Link to="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Use</Link>
+                  </li>
+                  <li>
+                    <Link to="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
+                  </li>
+                </ul>
               </div>
             </div>
-
-            <div className="mt-8 md:mt-0 space-y-4">
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Use</Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
-                </li>
-              </ul>
-            </div>
           </div>
-
-          <div className="mt-12 pt-8 border-t border-white/10">
-            <p className="text-white/40 text-sm text-center">
-              © 2025 CYANIS. All rights reserved.
-            </p>
+          
+          <div className="border-t border-white/10">
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              <p className="text-white/40 text-sm text-center">
+                © 2025 CYANIS. All rights reserved.
+              </p>
+            </div>
           </div>
         </footer>
       </div>
