@@ -10,6 +10,51 @@
   }
 }
 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rotateIcon {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
 .animate-grid {
   animation: grid 20s linear infinite;
 }
@@ -27,15 +72,76 @@
 .button-glow:hover {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2),
               0 0 40px rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
-.card-glow {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05),
-              0 0 40px rgba(255, 255, 255, 0.025);
+.primary-button {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.primary-button:hover {
+  animation: none;
+  transform: translateY(-1px);
+}
+
+.primary-button:hover .chevron-icon {
+  animation: slideRight 1s infinite ease-in-out;
+}
+
+.nav-link {
+  position: relative;
   transition: all 0.3s ease;
 }
 
-.card-glow:hover {
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.08),
-              0 0 50px rgba(255, 255, 255, 0.04);
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 50%;
+  background-color: white;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.social-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover .social-icon {
+  animation: rotateIcon 0.8s ease-in-out;
+}
+
+.feature-card {
+  transition: all 0.4s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+}
+
+.feature-card:hover .feature-icon {
+  animation: float 2s ease-in-out infinite;
+}
+
+.capability-card {
+  transition: all 0.4s ease;
+}
+
+.capability-card:hover {
+  transform: translateY(-4px);
+}
+
+.capability-card:hover .capability-icon {
+  animation: float 2s ease-in-out infinite;
+}
+
+.floating-card {
+  animation: float 6s ease-in-out infinite;
 }
