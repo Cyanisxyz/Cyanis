@@ -13,3 +13,29 @@
 .animate-grid {
   animation: grid 20s linear infinite;
 }
+
+.header-glow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1),
+              0 0 40px rgba(255, 255, 255, 0.05);
+}
+
+.button-glow {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.button-glow:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2),
+              0 0 40px rgba(255, 255, 255, 0.1);
+}
+
+.card-glow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05),
+              0 0 40px rgba(255, 255, 255, 0.025);
+  transition: all 0.3s ease;
+}
+
+.card-glow:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.08),
+              0 0 50px rgba(255, 255, 255, 0.04);
+}
