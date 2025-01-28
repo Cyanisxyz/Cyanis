@@ -12,8 +12,8 @@ function Home() {
   };
 
   return (
-    <>
-      <header className="max-w-7xl mx-auto px-6 py-20">
+    <div className="custom-scrollbar">
+      <header className="max-w-7xl mx-auto px-6 pt-32 pb-20">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-6xl font-orbitron font-bold mb-6">CYANIS</h1>
           <div className="space-y-4 mb-12">
@@ -112,7 +112,7 @@ function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 

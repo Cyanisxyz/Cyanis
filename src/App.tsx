@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Github, Twitter } from 'lucide-react';
 import Home from './pages/Home';
@@ -11,6 +11,10 @@ function App() {
   const location = useLocation();
   const isAgentRoute = location.pathname === '/agent';
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   if (isAgentRoute) {
     return (
       <div className="min-h-screen bg-black text-white font-sans">
@@ -22,12 +26,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white font-sans relative overflow-y-auto custom-scrollbar">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_1px,_transparent_1.5px)] bg-[length:24px_24px] animate-grid opacity-80" />
       <div className="absolute inset-0 bg-gradient-to-r from-[hsl(205_65%_35%)]/30 to-[hsl(183_31%_26%)]/30" />
 
       <div className="relative z-10">
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-black/80 border border-white/10 rounded-full backdrop-blur-sm py-2 px-4 z-50 header-glow">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-black/80 border border-white/10 rounded-full backdrop-blur-sm py-2 px-4 z-50 header-glow">
           <div className="flex items-center space-x-8">
             <Link to="/" className="text-xl font-orbitron font-bold text-white">CYANIS</Link>
             <div className="h-4 w-px bg-white/20" />
@@ -51,7 +55,7 @@ function App() {
           <Route path="/docs" element={<Documentation />} />
         </Routes>
 
-        <footer className="w-full border-t border-white/10">
+        <footer className="relative z-10 w-full">
           <div className="max-w-7xl mx-auto px-6 py-16">
             <div className="flex flex-col md:flex-row justify-between items-start">
               <div className="space-y-4 md:w-1/2">
@@ -79,14 +83,6 @@ function App() {
                   </li>
                 </ul>
               </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-white/10">
-            <div className="max-w-7xl mx-auto px-6 py-8">
-              <p className="text-white/40 text-sm text-center">
-                © 2025 CYANIS. All rights reserved.
-              </p>
             </div>
           </div>
         </footer>

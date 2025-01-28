@@ -2,7 +2,7 @@ import React from 'react';
 
 function TermsOfUse() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-20">
+    <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
       <h1 className="text-4xl font-orbitron font-bold mb-8">Terms of Use</h1>
       <div className="space-y-8 text-white/80">
         <div className="mb-6">

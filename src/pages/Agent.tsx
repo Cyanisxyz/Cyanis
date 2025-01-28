@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, Image as ImageIcon, Code, Paperclip, Menu, X, Plus, MessageSquare } from 'lucide-react';
+import { Send, Sparkles, Paperclip, Menu, X, Plus, MessageSquare, Share2, Pencil, Trash2, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+interface Chat {
+  id: string;
+  name: string;
+  messages: Message[];
+  createdAt: Date;
+}
 
 interface Message {
   role: 'user' | 'assistant';
@@ -9,18 +16,33 @@ interface Message {
 }
 
 function Agent() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  const [chats, setChats] = useState<Chat[]>([{
+    id: '1',
+    name: 'New Chat',
+    messages: [{
       role: 'assistant',
       content: 'Hello! I am CYANIS, your advanced AI assistant. How can I help you today?',
       timestamp: new Date()
-    }
-  ]);
+    }],
+    createdAt: new Date()
+  }]);
+  const [currentChatId, setCurrentChatId] = useState('1');
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [editingChatId, setEditingChatId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const currentChat = chats.find(chat => chat.id === currentChatId);
+
+  const filteredChats = chats.filter(chat => 
+    chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    chat.messages.some(msg => msg.content.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -28,7 +50,23 @@ function Agent() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [currentChat?.messages]);
+
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
+      const maxHeight = lineHeight * 10;
+      const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+      textarea.style.height = `${newHeight}px`;
+      textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [input]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,18 +78,25 @@ function Agent() {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setChats(prev => prev.map(chat => 
+      chat.id === currentChatId 
+        ? { ...chat, messages: [...chat.messages, userMessage] }
+        : chat
+    ));
     setInput('');
     setIsProcessing(true);
 
-    // Simulate AI response
     setTimeout(() => {
       const aiMessage: Message = {
         role: 'assistant',
         content: 'I understand your request. However, I am currently in demonstration mode and cannot process actual queries. In a production environment, I would analyze your input and provide a relevant, helpful response.',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiMessage]);
+      setChats(prev => prev.map(chat => 
+        chat.id === currentChatId 
+          ? { ...chat, messages: [...chat.messages, aiMessage] }
+          : chat
+      ));
       setIsProcessing(false);
     }, 1000);
   };
@@ -61,101 +106,228 @@ function Agent() {
   };
 
   const startNewChat = () => {
-    setMessages([{
-      role: 'assistant',
-      content: 'Hello! I am CYANIS, your advanced AI assistant. How can I help you today?',
-      timestamp: new Date()
-    }]);
+    const newChat: Chat = {
+      id: Date.now().toString(),
+      name: 'New Chat',
+      messages: [{
+        role: 'assistant',
+        content: 'Hello! I am CYANIS, your advanced AI assistant. How can I help you today?',
+        timestamp: new Date()
+      }],
+      createdAt: new Date()
+    };
+    setChats(prev => [...prev, newChat]);
+    setCurrentChatId(newChat.id);
+  };
+
+  const deleteChat = (chatId: string) => {
+    setChats(prev => prev.filter(chat => chat.id !== chatId));
+    if (currentChatId === chatId) {
+      const remainingChats = chats.filter(chat => chat.id !== chatId);
+      if (remainingChats.length > 0) {
+        setCurrentChatId(remainingChats[0].id);
+      } else {
+        startNewChat();
+      }
+    }
+  };
+
+  const shareChat = (chatId: string) => {
+    const chat = chats.find(c => c.id === chatId);
+    if (chat) {
+      const chatContent = chat.messages.map(m => 
+        `${m.role === 'assistant' ? 'CYANIS' : 'You'}: ${m.content}`
+      ).join('\n\n');
+      navigator.clipboard.writeText(chatContent);
+    }
+  };
+
+  const startEditing = (chatId: string, currentName: string) => {
+    setEditingChatId(chatId);
+    setEditingName(currentName);
+  };
+
+  const saveEditing = () => {
+    if (editingChatId && editingName.trim()) {
+      setChats(prev => prev.map(chat =>
+        chat.id === editingChatId
+          ? { ...chat, name: editingName.trim() }
+          : chat
+      ));
+    }
+    setEditingChatId(null);
+    setEditingName('');
   };
 
   return (
-    <div className="flex h-screen bg-black">
+    <div className="flex h-screen overflow-hidden bg-black">
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_1px,_transparent_1.5px)] bg-[length:24px_24px] animate-grid opacity-80" />
+      <div className="fixed inset-0 bg-gradient-to-r from-[hsl(205_65%_35%)]/30 to-[hsl(183_31%_26%)]/30" />
+
       {/* Sidebar */}
-      <div className={`fixed md:relative inset-y-0 left-0 z-50 w-64 bg-black border-r border-white/10 transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`fixed md:sticky top-0 z-50 w-64 h-screen bg-black/90 backdrop-blur-xl border-r border-white/10 transition-transform duration-200 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}>
         <div className="flex flex-col h-full">
-          {/* New Chat Button */}
-          <div className="p-4">
-            <button
-              onClick={startNewChat}
-              className="w-full flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white rounded-lg px-4 py-3 transition-colors"
+          {/* Search and New Chat */}
+          <div className="p-2 space-y-2">
+            <div className="flex items-center space-x-2">
+              <div className="relative flex-1">
+                <div className="flex items-center bg-black/50 rounded-lg border border-white/10 hover:border-white/20 transition-all">
+                  <Search className="w-4 h-4 text-white/40 absolute left-3" />
+                  <input
+                    type="text"
+                    placeholder="Search chats..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent text-white placeholder-white/40 pl-10 pr-4 py-2 outline-none text-sm"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={startNewChat}
+                className="w-10 h-10 flex items-center justify-center bg-black/50 hover:bg-white/5 text-white rounded-lg border border-white/10 transition-all hover:border-white/20 button-glow"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Chat List */}
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+            {filteredChats.map(chat => (
+              <div
+                key={chat.id}
+                className={`group relative flex items-center space-x-2 hover:bg-white/5 rounded-lg px-3 py-2 transition-colors cursor-pointer ${
+                  currentChatId === chat.id ? 'bg-white/10' : ''
+                }`}
+                onClick={() => setCurrentChatId(chat.id)}
+              >
+                <MessageSquare className="w-4 h-4 flex-shrink-0" />
+                {editingChatId === chat.id ? (
+                  <input
+                    type="text"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    onBlur={saveEditing}
+                    onKeyDown={(e) => e.key === 'Enter' && saveEditing()}
+                    className="flex-1 bg-transparent border-none outline-none text-white text-sm"
+                    autoFocus
+                  />
+                ) : (
+                  <>
+                    <span className="flex-1 truncate text-sm">{chat.name}</span>
+                    <div className="hidden group-hover:flex items-center space-x-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditing(chat.id, chat.name);
+                        }}
+                        className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          shareChat(chat.id);
+                        }}
+                        className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                      >
+                        <Share2 className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteChat(chat.id);
+                        }}
+                        className="p-1 hover:bg-white/10 rounded-lg transition-colors text-red-400"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Back to Home */}
+          <div className="p-2 mt-auto">
+            <Link 
+              to="/" 
+              className="block hover:bg-white/5 text-white/70 rounded-lg px-3 py-2 transition-colors text-sm button-glow border border-white/10 hover:border-white/20"
             >
-              <Plus className="w-5 h-5" />
-              <span>New Chat</span>
-            </button>
-          </div>
-
-          {/* Chat History */}
-          <div className="flex-1 overflow-y-auto p-2 space-y-2">
-            <button className="w-full flex items-center space-x-2 hover:bg-white/10 text-white/70 rounded-lg px-3 py-2 transition-colors text-left">
-              <MessageSquare className="w-4 h-4" />
-              <span className="truncate">Current Chat</span>
-            </button>
-          </div>
-
-          {/* Bottom Links */}
-          <div className="p-4 border-t border-white/10">
-            <Link to="/" className="block hover:bg-white/10 text-white/70 rounded-lg px-3 py-2 transition-colors">
               Back to Home
             </Link>
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <main className="relative flex-1 flex flex-col h-screen overflow-hidden">
         {/* Mobile Header */}
-        <div className="md:hidden flex items-center justify-between p-4 border-b border-white/10">
+        <div className="md:hidden flex items-center justify-between p-4 bg-black/90 backdrop-blur-xl border-b border-white/10">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/5 rounded-xl transition-colors"
           >
             {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <span className="font-orbitron font-bold">CYANIS</span>
-          <div className="w-10" /> {/* Spacer for alignment */}
+          <div className="w-10" />
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`flex items-start space-x-3 max-w-[85%] ${
-                    message.role === 'assistant' ? 'bg-white/5' : ''
-                  } p-3 rounded-lg`}
-                >
-                  {message.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                  )}
-                  <div className={`space-y-1 ${message.role === 'user' ? 'order-first' : ''}`}>
-                    <div className="font-medium text-sm text-white/60">
-                      {message.role === 'assistant' ? 'CYANIS' : 'You'}
-                    </div>
-                    <p className={`text-white/90 whitespace-pre-wrap ${
-                      message.role === 'user' ? 'bg-blue-600 rounded-lg p-2' : ''
-                    }`}>{message.content}</p>
-                  </div>
-                  {message.role === 'user' && (
-                    <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="w-4 h-4" />
-                    </div>
-                  )}
-                </div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <div className="max-w-2xl mx-auto px-4 py-4 space-y-6">
+            {!currentChat?.messages.length ? (
+              <div className="flex items-center justify-center min-h-[200px]">
+                <p className="text-white/40">No messages yet</p>
               </div>
-            ))}
+            ) : (
+              currentChat?.messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`flex items-start space-x-3 ${
+                      message.role === 'assistant' ? 'bg-black/80 border border-white/10 button-glow' : ''
+                    } p-4 rounded-2xl backdrop-blur-sm ${message.role === 'user' ? 'max-w-[85%]' : 'max-w-[85%]'}`}
+                  >
+                    {message.role === 'assistant' && (
+                      <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                    )}
+                    <div className={`space-y-2 flex-1 min-w-0 ${message.role === 'user' ? 'order-first' : ''}`}>
+                      <div className="font-medium text-sm text-white/60">
+                        {message.role === 'assistant' ? 'CYANIS' : 'You'}
+                      </div>
+                      <div className={`text-white/90 overflow-hidden ${
+                        message.role === 'user' ? 'bg-indigo-600 rounded-xl p-3 button-glow' : ''
+                      }`}>
+                        <p className="whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
+                      </div>
+                    </div>
+                    {message.role === 'user' && (
+                      <div className="w-8 h-8 rounded-xl bg-black/80 border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <MessageSquare className="w-5 h-5" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
             {isProcessing && (
               <div className="flex justify-start">
-                <div className="flex items-start space-x-3 max-w-[85%] bg-white/5 p-3 rounded-lg">
-                  <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 animate-pulse" />
+                <div className="flex items-start space-x-3 max-w-[85%] bg-black/80 border border-white/10 p-4 rounded-2xl backdrop-blur-sm button-glow">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 animate-pulse" />
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <div className="font-medium text-sm text-white/60">CYANIS</div>
                     <p className="text-white/90">Thinking...</p>
                   </div>
@@ -167,57 +339,41 @@ function Agent() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-white/10 bg-black">
+        <div className="border-t border-white/10 bg-black/90 backdrop-blur-lg">
           <div className="max-w-2xl mx-auto p-4">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="flex items-end space-x-2">
-                <div className="flex-1 bg-white/10 rounded-lg">
-                  <div className="flex items-center px-3 py-2 space-x-2">
-                    <button
-                      type="button"
-                      className="p-1 hover:bg-white/10 rounded transition-colors"
-                      onClick={handleFileUpload}
-                    >
-                      <Paperclip className="w-5 h-5" />
-                    </button>
-                    <button
-                      type="button"
-                      className="p-1 hover:bg-white/10 rounded transition-colors"
-                    >
-                      <ImageIcon className="w-5 h-5" />
-                    </button>
-                    <button
-                      type="button"
-                      className="p-1 hover:bg-white/10 rounded transition-colors"
-                    >
-                      <Code className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div className="px-3 pb-2">
-                    <textarea
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="Message CYANIS..."
-                      className="w-full bg-transparent border-none outline-none resize-none text-white placeholder-white/40"
-                      rows={1}
-                      style={{
-                        height: 'auto',
-                        minHeight: '24px',
-                        maxHeight: '200px'
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSubmit(e);
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
+              <div className="relative bg-black/80 rounded-xl border border-white/10 shadow-lg">
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                  }}
+                  placeholder="Message CYANIS..."
+                  className="w-full bg-transparent border-none outline-none text-white placeholder-white/40 py-4 px-4 pr-16 pl-12 min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere"
+                  style={{
+                    lineHeight: '1.5',
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                />
+                
+                <button
+                  type="button"
+                  className="absolute left-2 bottom-2 p-2 hover:bg-white/5 rounded-lg transition-colors"
+                  onClick={handleFileUpload}
+                >
+                  <Paperclip className="w-5 h-5 text-white/60" />
+                </button>
+                
                 <button
                   type="submit"
                   disabled={!input.trim() || isProcessing}
-                  className="p-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-lg transition-colors"
+                  className="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
                 >
                   <Send className="w-5 h-5" />
                 </button>
@@ -225,7 +381,7 @@ function Agent() {
             </form>
           </div>
         </div>
-      </div>
+      </main>
 
       <input
         type="file"
@@ -233,7 +389,6 @@ function Agent() {
         className="hidden"
         accept="image/*,.pdf,.doc,.docx,.txt"
         onChange={(e) => {
-          // Handle file upload logic here
           console.log('File selected:', e.target.files?.[0]);
         }}
       />

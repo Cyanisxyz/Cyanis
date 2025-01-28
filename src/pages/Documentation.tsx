@@ -3,7 +3,7 @@ import { Book, MessageSquare, Image, Brain, Shield, Terminal, Code, Zap, Setting
 
 function Documentation() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-20">
+    <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
       <h1 className="text-4xl font-orbitron font-bold mb-8">Documentation</h1>
       
       <div className="space-y-16 text-white/80">
@@ -256,20 +256,6 @@ function Documentation() {
                 </a>
               </p>
             </div>
-          </div>
-        </section>
-
-        <section className="mt-12 pt-8 border-t border-white/10">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Legal & Policies</h2>
-            <ul className="space-y-2">
-              <li>
-                <a href="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Use</a>
-              </li>
-              <li>
-                <a href="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</a>
-              </li>
-            </ul>
           </div>
         </section>
       </div>
