@@ -17,7 +17,7 @@ function App() {
       {/* Content Container */}
       <div className="relative z-10">
         {/* Floating Header */}
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-white/5 border border-white/10 rounded-full backdrop-blur-sm py-2 px-4">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-white/5 border border-white/10 rounded-full backdrop-blur-sm py-2 px-4 z-50">
           <div className="flex items-center space-x-8">
             <a href="#features" className="hover:text-white/80 transition-colors px-4">Features</a>
             <a href="#capabilities" className="hover:text-white/80 transition-colors px-4">Capabilities</a>
