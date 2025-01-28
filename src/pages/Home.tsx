@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MessageSquare, Image, Brain, Shield, Terminal, ChevronRight, Sparkles, Search, Zap, Settings, Copy, Check } from 'lucide-react';
 
 function Home() {
@@ -24,13 +25,13 @@ function Home() {
             </p>
           </div>
           <div className="flex justify-center space-x-4">
-            <button className="bg-white text-black px-8 py-3 rounded-full flex items-center space-x-2 transition-all hover:bg-white/90 button-glow primary-button">
+            <Link to="/agent" className="bg-white text-black px-8 py-3 rounded-full flex items-center space-x-2 transition-all hover:bg-white/90 button-glow primary-button">
               <span>Initialize System</span>
               <ChevronRight className="w-5 h-5 chevron-icon" />
-            </button>
-            <button className="border border-white/20 hover:border-white/40 px-8 py-3 rounded-full transition-all button-glow">
+            </Link>
+            <Link to="/docs" className="border border-white/20 hover:border-white/40 px-8 py-3 rounded-full transition-all button-glow">
               View Documentation
-            </button>
+            </Link>
           </div>
         </div>
       </header>

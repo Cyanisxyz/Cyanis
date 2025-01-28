@@ -1,11 +1,26 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Github, Twitter } from 'lucide-react';
 import Home from './pages/Home';
 import TermsOfUse from './pages/TermsOfUse';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Documentation from './pages/Documentation';
+import Agent from './pages/Agent';
 
 function App() {
+  const location = useLocation();
+  const isAgentRoute = location.pathname === '/agent';
+
+  if (isAgentRoute) {
+    return (
+      <div className="min-h-screen bg-black text-white font-sans">
+        <Routes>
+          <Route path="/agent" element={<Agent />} />
+        </Routes>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white font-sans relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_1px,_transparent_1.5px)] bg-[length:24px_24px] animate-grid opacity-80" />
@@ -33,6 +48,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/terms" element={<TermsOfUse />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/docs" element={<Documentation />} />
         </Routes>
 
         <footer className="w-full border-t border-white/10">
