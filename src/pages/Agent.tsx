@@ -292,45 +292,32 @@ function Agent() {
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div
-                    className={`flex items-start space-x-3 ${
-                      message.role === 'assistant' ? 'bg-black/80 border border-white/10 button-glow' : ''
-                    } p-4 rounded-2xl backdrop-blur-sm ${message.role === 'user' ? 'max-w-[85%]' : 'max-w-[85%]'}`}
-                  >
+                  <div className={`max-w-[85%] ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
                     {message.role === 'assistant' && (
-                      <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-5 h-5" />
+                      <div className="flex items-center space-x-3 mb-2">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0">
+                          <Sparkles className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm text-white/60">CYANIS</span>
                       </div>
                     )}
-                    <div className={`space-y-2 flex-1 min-w-0 ${message.role === 'user' ? 'order-first' : ''}`}>
-                      <div className="font-medium text-sm text-white/60">
-                        {message.role === 'assistant' ? 'CYANIS' : 'You'}
-                      </div>
-                      <div className={`text-white/90 overflow-hidden ${
-                        message.role === 'user' ? 'bg-indigo-600 rounded-xl p-3 button-glow' : ''
-                      }`}>
-                        <p className="whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
-                      </div>
+                    <div className={`text-white/90 ${message.role === 'user' ? 'text-indigo-400' : ''}`}>
+                      <p className="whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
                     </div>
-                    {message.role === 'user' && (
-                      <div className="w-8 h-8 rounded-xl bg-black/80 border border-white/10 flex items-center justify-center flex-shrink-0">
-                        <MessageSquare className="w-5 h-5" />
-                      </div>
-                    )}
                   </div>
                 </div>
               ))
             )}
             {isProcessing && (
               <div className="flex justify-start">
-                <div className="flex items-start space-x-3 max-w-[85%] bg-black/80 border border-white/10 p-4 rounded-2xl backdrop-blur-sm button-glow">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-                    <Sparkles className="w-5 h-5 animate-pulse" />
+                <div className="max-w-[85%]">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <span className="text-sm text-white/60">CYANIS</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="font-medium text-sm text-white/60">CYANIS</div>
-                    <p className="text-white/90">Thinking...</p>
-                  </div>
+                  <p className="text-white/90">Thinking...</p>
                 </div>
               </div>
             )}
@@ -339,47 +326,45 @@ function Agent() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-white/10 bg-black/90 backdrop-blur-lg">
-          <div className="max-w-2xl mx-auto p-4">
-            <form onSubmit={handleSubmit} className="relative">
-              <div className="relative bg-black/80 rounded-xl border border-white/10 shadow-lg">
-                <textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                  }}
-                  placeholder="Message CYANIS..."
-                  className="w-full bg-transparent border-none outline-none text-white placeholder-white/40 py-4 px-4 pr-16 pl-12 min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere"
-                  style={{
-                    lineHeight: '1.5',
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(e);
-                    }
-                  }}
-                />
-                
-                <button
-                  type="button"
-                  className="absolute left-2 bottom-2 p-2 hover:bg-white/5 rounded-lg transition-colors"
-                  onClick={handleFileUpload}
-                >
-                  <Paperclip className="w-5 h-5 text-white/60" />
-                </button>
-                
-                <button
-                  type="submit"
-                  disabled={!input.trim() || isProcessing}
-                  className="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
-              </div>
-            </form>
-          </div>
+        <div className="p-4">
+          <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
+            <div className="relative bg-black/50 rounded-xl border border-white/10 shadow-lg backdrop-blur-sm">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                }}
+                placeholder="Message CYANIS..."
+                className="w-full bg-transparent border-none outline-none text-white placeholder-white/40 py-4 px-4 pr-16 pl-12 min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere"
+                style={{
+                  lineHeight: '1.5',
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+              />
+              
+              <button
+                type="button"
+                className="absolute left-2 bottom-2 p-2 hover:bg-white/5 rounded-lg transition-colors"
+                onClick={handleFileUpload}
+              >
+                <Paperclip className="w-5 h-5 text-white/60" />
+              </button>
+              
+              <button
+                type="submit"
+                disabled={!input.trim() || isProcessing}
+                className="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+          </form>
         </div>
       </main>
 
