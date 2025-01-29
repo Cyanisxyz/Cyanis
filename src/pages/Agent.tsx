@@ -292,17 +292,20 @@ function Agent() {
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
+                  <div className="flex items-start space-x-3 max-w-[85%] w-fit">
                     {message.role === 'assistant' && (
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center flex-shrink-0">
-                          <Sparkles className="w-5 h-5" />
-                        </div>
-                        <span className="text-sm text-white/60">CYANIS</span>
-                      </div>
+                      <img
+                        src="https://i.imgur.com/euv1OAa.png"
+                        alt="CYANIS"
+                        className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                      />
                     )}
-                    <div className={`text-white/90 ${message.role === 'user' ? 'text-indigo-400' : ''}`}>
-                      <p className="whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
+                    <div className={`flex-1 ${
+                      message.role === 'user' 
+                        ? 'bg-black/20 backdrop-blur-sm rounded-2xl px-4 py-3 text-white border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
+                        : 'text-white'
+                    } ${message.role === 'user' ? 'order-first' : ''}`}>
+                      <p className="whitespace-pre-wrap break-words">{message.content}</p>
                     </div>
                   </div>
                 </div>
@@ -310,14 +313,13 @@ function Agent() {
             )}
             {isProcessing && (
               <div className="flex justify-start">
-                <div className="max-w-[85%]">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 animate-pulse" />
-                    </div>
-                    <span className="text-sm text-white/60">CYANIS</span>
-                  </div>
-                  <p className="text-white/90">Thinking...</p>
+                <div className="flex items-start space-x-3 max-w-[85%] w-fit">
+                  <img
+                    src="https://i.imgur.com/euv1OAa.png"
+                    alt="CYANIS"
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                  />
+                  <p className="text-white">Thinking...</p>
                 </div>
               </div>
             )}
