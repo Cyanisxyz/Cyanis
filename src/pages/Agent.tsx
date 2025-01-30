@@ -23,11 +23,7 @@ function Agent() {
   const [chats, setChats] = useState<Chat[]>([{
     id: '1',
     name: 'New Chat',
-    messages: [{
-      role: 'assistant',
-      content: 'Hello! I am CYANIS, your advanced AI assistant. How can I help you today?',
-      timestamp: new Date()
-    }],
+    messages: [],
     createdAt: new Date()
   }]);
   const [currentChatId, setCurrentChatId] = useState('1');
@@ -170,11 +166,7 @@ function Agent() {
     const newChat: Chat = {
       id: Date.now().toString(),
       name: 'New Chat',
-      messages: [{
-        role: 'assistant',
-        content: 'Hello! I am CYANIS, your advanced AI assistant. How can I help you today?',
-        timestamp: new Date()
-      }],
+      messages: [],
       createdAt: new Date()
     };
     setChats(prev => [...prev, newChat]);
@@ -362,7 +354,7 @@ function Agent() {
       <main className="relative flex-1 flex flex-col h-screen overflow-hidden">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="max-w-2xl mx-auto py-4 space-y-6">
+          <div className="max-w-2xl mx-auto pt-8 pb-4 px-3 space-y-6">
             {!currentChat?.messages.length ? (
               <div className="flex items-center justify-center min-h-[200px]">
                 <p className="text-white/40">No messages yet</p>
@@ -371,7 +363,7 @@ function Agent() {
               currentChat?.messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} px-4`}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className="flex items-start space-x-3 max-w-[85%] w-fit">
                     {message.role === 'assistant' && (
@@ -409,7 +401,7 @@ function Agent() {
               ))
             )}
             {isProcessing && (
-              <div className="flex justify-start px-4">
+              <div className="flex justify-start">
                 <div className="flex items-start space-x-3 max-w-[85%]">
                   <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
                     <Sparkles className="w-5 h-5 animate-pulse" />
@@ -423,7 +415,7 @@ function Agent() {
         </div>
 
         {/* Input Area */}
-        <div className="px-4 pb-4">
+        <div className="px-3 pb-2">
           <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
             <div className="relative bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
               <textarea
@@ -433,7 +425,7 @@ function Agent() {
                   setInput(e.target.value);
                 }}
                 placeholder="Message CYANIS..."
-                className="w-full bg-transparent text-white placeholder-white/40 py-4 pr-14 pl-12 min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere outline-none rounded-2xl"
+                className="w-full bg-transparent text-white placeholder-white/40 py-4 pr-[53px] pl-12 min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere outline-none rounded-2xl"
                 style={{
                   lineHeight: '1.5',
                 }}
@@ -456,7 +448,7 @@ function Agent() {
               <button
                 type="submit"
                 disabled={!input.trim() || isProcessing}
-                className="absolute right-2 bottom-4 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
+                className="absolute right-3 bottom-3 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
               >
                 <Send className="w-5 h-5" />
               </button>
