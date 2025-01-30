@@ -188,7 +188,8 @@
 
 /* Word wrapping */
 .overflow-wrap-anywhere {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   word-break: break-word;
-  hyphens: auto;
+  hyphens: none;
+  max-width: 100%;
 }
