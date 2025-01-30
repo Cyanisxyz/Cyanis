@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Image, Brain, Shield, Terminal, ChevronRight, Sparkles, Search, Zap, Settings, Copy, Check } from 'lucide-react';
+import LoadingScreen from '../components/LoadingScreen';
 
 function Home() {
   const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText("COMING SOON");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="custom-scrollbar">

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Paperclip, Menu, X, Plus, MessageSquare, Share2, Pencil, Trash2, Search, Copy, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import LoadingScreen from '../components/LoadingScreen';
 
 interface Chat {
   id: string;
@@ -20,6 +21,7 @@ interface GroupedChats {
 }
 
 function Agent() {
+  const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<Chat[]>([{
     id: '1',
     name: 'New Chat',
@@ -42,6 +44,14 @@ function Agent() {
   const searchRef = useRef<HTMLDivElement>(null);
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const groupChatsByDate = (chats: Chat[]): GroupedChats => {
     const now = new Date();
@@ -211,6 +221,10 @@ function Agent() {
     setEditingChatId(null);
     setEditingName('');
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-black">
@@ -471,5 +485,3 @@ function Agent() {
 }
 
 export default Agent;
-
-export default Agent

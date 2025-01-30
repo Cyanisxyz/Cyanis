@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import LoadingScreen from '../components/LoadingScreen';
 
 function PrivacyPolicy() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
       <h1 className="text-4xl font-orbitron font-bold mb-8">Privacy Policy</h1>
