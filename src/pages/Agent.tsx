@@ -354,7 +354,7 @@ function Agent() {
       <main className="relative flex-1 flex flex-col h-screen overflow-hidden">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="max-w-2xl mx-auto pt-8 pb-4 px-3 space-y-6">
+          <div className="max-w-2xl mx-auto pt-8 pb-4 px-[13px] space-y-6">
             {!currentChat?.messages.length ? (
               <div className="flex items-center justify-center min-h-[200px]">
                 <p className="text-white/40">No messages yet</p>
@@ -425,7 +425,7 @@ function Agent() {
                   setInput(e.target.value);
                 }}
                 placeholder="Message CYANIS..."
-                className="w-full bg-transparent text-white placeholder-white/40 py-4 pr-[53px] pl-12 min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere outline-none rounded-2xl"
+                className="w-full bg-transparent text-white placeholder-white/40 py-4 px-[53px] min-h-[24px] max-h-[240px] custom-scrollbar resize-none overflow-wrap-anywhere outline-none rounded-2xl"
                 style={{
                   lineHeight: '1.5',
                 }}
@@ -439,7 +439,7 @@ function Agent() {
               
               <button
                 type="button"
-                className="absolute left-2 bottom-4 p-2 hover:bg-white/5 rounded-lg transition-colors"
+                className="absolute left-3 bottom-3 w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors"
                 onClick={handleFileUpload}
               >
                 <Paperclip className="w-5 h-5 text-white/60" />
@@ -471,3 +471,5 @@ function Agent() {
 }
 
 export default Agent;
+
+export default Agent
