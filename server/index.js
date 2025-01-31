@@ -23,12 +23,8 @@ try {
   process.exit(1);
 }
 
-// Updated CORS configuration for production
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*', // Allow your frontend URL in production
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
+// Middleware
+app.use(cors());
 app.use(express.json());
 
 // Health check endpoint
