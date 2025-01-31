@@ -20,17 +20,20 @@ export interface ErrorResponse {
   details: any;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 export async function sendMessage(messages: Message[]): Promise<ChatResponse> {
   try {
-    const response = await fetch(`${API_URL}/api/chat`, {
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ messages }),
     });
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server returned non-JSON response. Please check the API endpoint configuration.');
+    }
 
     const data = await response.json();
 
@@ -49,7 +52,7 @@ export async function sendMessage(messages: Message[]): Promise<ChatResponse> {
     return data;
   } catch (error) {
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      throw new Error('Unable to connect to the server. Please make sure the server is running by executing "npm run server" in your terminal.');
+      throw new Error('Unable to connect to the server. Please check if the API URL is correct and the server is running.');
     }
     
     if (error instanceof Error) {
