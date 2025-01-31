@@ -50,7 +50,7 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "ft:gpt-4o-2024-08-06:cyanis:cyanis:Avmww0lF",
       messages: messages,
       temperature: 0.7,
       max_tokens: 1000,
