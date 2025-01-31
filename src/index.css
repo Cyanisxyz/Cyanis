@@ -7,6 +7,48 @@
 /* Global scrollbar styles */
 :root {
   color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+/* Scroll reveal animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply reveal animations to sections and content blocks */
+section, .content-block {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+section.visible, .content-block.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+section.invisible, .content-block.invisible {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
 }
 
 /* Custom scrollbar styles */
@@ -152,6 +194,19 @@
 
 .feature-card {
   transition: all 0.4s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature-card.invisible {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
 }
 
 .feature-card:hover {
@@ -164,6 +219,19 @@
 
 .capability-card {
   transition: all 0.4s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.capability-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.capability-card.invisible {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
 }
 
 .capability-card:hover {

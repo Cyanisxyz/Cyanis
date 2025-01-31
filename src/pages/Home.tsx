@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Image, Brain, Shield, Terminal, ChevronRight, Sparkles, Search, Zap, Settings, Copy, Check } from 'lucide-react';
 import LoadingScreen from '../components/LoadingScreen';
@@ -14,6 +14,45 @@ function Home() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              entry.target.classList.remove('invisible');
+            } else {
+              entry.target.classList.remove('visible');
+              entry.target.classList.add('invisible');
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        }
+      );
+
+      // Observe all sections and cards
+      document.querySelectorAll('section, .feature-card, .capability-card').forEach((el) => {
+        observer.observe(el);
+      });
+
+      // Add visible class by default to initial viewport elements
+      document.querySelectorAll('section, .feature-card, .capability-card').forEach((el) => {
+        if (el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('visible');
+          el.classList.remove('invisible');
+        } else {
+          el.classList.add('invisible');
+        }
+      });
+
+      return () => observer.disconnect();
+    }
+  }, [isLoading]); // Only run after loading is complete
 
   const handleCopy = () => {
     navigator.clipboard.writeText("COMING SOON");

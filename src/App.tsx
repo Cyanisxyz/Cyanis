@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Github, Twitter } from 'lucide-react';
 import Home from './pages/Home';
 import TermsOfUse from './pages/TermsOfUse';
@@ -9,11 +9,20 @@ import Agent from './pages/Agent';
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAgentRoute = location.pathname === '/agent';
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  const handleLogoClick = () => {
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
 
   if (isAgentRoute) {
     return (
@@ -33,7 +42,12 @@ function App() {
       <div className="relative z-10">
         <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-black/80 border border-white/10 rounded-full backdrop-blur-sm py-2 px-4 z-50 header-glow">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="text-xl font-orbitron font-bold text-white">CYANIS</Link>
+            <button 
+              onClick={handleLogoClick}
+              className="text-xl font-orbitron font-bold text-white hover:text-white/80 transition-colors"
+            >
+              CYANIS
+            </button>
             <div className="h-4 w-px bg-white/20" />
             <a href="/#features" className="nav-link text-white/80 hover:text-white transition-colors px-4">Features</a>
             <a href="/#capabilities" className="nav-link text-white/80 hover:text-white transition-colors px-4">Capabilities</a>
@@ -59,7 +73,12 @@ function App() {
           <div className="max-w-7xl mx-auto px-6 py-16">
             <div className="flex flex-col md:flex-row justify-between items-start">
               <div className="space-y-4 md:w-1/2">
-                <Link to="/" className="text-xl font-orbitron font-bold">CYANIS</Link>
+                <button 
+                  onClick={handleLogoClick}
+                  className="text-xl font-orbitron font-bold hover:text-white/80 transition-colors"
+                >
+                  CYANIS
+                </button>
                 <p className="text-white/60 max-w-md">
                   An advanced AI platform revolutionizing human-machine interactions—bridging intelligence and innovation.
                 </p>

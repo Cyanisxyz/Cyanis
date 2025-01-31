@@ -12,18 +12,54 @@ function TermsOfUse() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              entry.target.classList.remove('invisible');
+            } else {
+              entry.target.classList.remove('visible');
+              entry.target.classList.add('invisible');
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        }
+      );
+
+      document.querySelectorAll('section, .content-block').forEach((el) => {
+        observer.observe(el);
+        if (el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('visible');
+          el.classList.remove('invisible');
+        } else {
+          el.classList.add('invisible');
+        }
+      });
+
+      return () => observer.disconnect();
+    }
+  }, [isLoading]);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
     <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
-      <h1 className="text-4xl font-orbitron font-bold mb-8">Terms of Use</h1>
-      <div className="space-y-8 text-white/80">
+      <div className="content-block">
+        <h1 className="text-4xl font-orbitron font-bold mb-8">Terms of Use</h1>
         <div className="mb-6">
           <p className="text-sm text-white/60">Last Updated: 01/28/2025</p>
         </div>
+      </div>
 
+      <div className="space-y-8 text-white/80">
         <p>
           Welcome to CYANIS, an AI-powered assistant designed to enhance your productivity and provide intelligent responses. By accessing and using CYANIS, you agree to comply with the following Terms of Use. If you do not agree, please refrain from using the service.
         </p>

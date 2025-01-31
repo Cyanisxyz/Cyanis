@@ -12,23 +12,61 @@ function PrivacyPolicy() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              entry.target.classList.remove('invisible');
+            } else {
+              entry.target.classList.remove('visible');
+              entry.target.classList.add('invisible');
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        }
+      );
+
+      document.querySelectorAll('section, .content-block').forEach((el) => {
+        observer.observe(el);
+        if (el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('visible');
+          el.classList.remove('invisible');
+        } else {
+          el.classList.add('invisible');
+        }
+      });
+
+      return () => observer.disconnect();
+    }
+  }, [isLoading]);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
     <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
-      <h1 className="text-4xl font-orbitron font-bold mb-8">Privacy Policy</h1>
-      <div className="space-y-8 text-white/80">
+      <div className="content-block">
+        <h1 className="text-4xl font-orbitron font-bold mb-8">Privacy Policy</h1>
         <div className="mb-6">
           <p className="text-sm text-white/60">Last Updated: 01/28/2025</p>
         </div>
+      </div>
 
-        <p>
-          CYANIS values your privacy and is committed to protecting your personal information. This Privacy Policy outlines how we collect, use, store, and safeguard your data when using CYANIS.
-        </p>
+      <div className="space-y-8 text-white/80">
+        <section className="content-block">
+          <p>
+            CYANIS values your privacy and is committed to protecting your personal information. This Privacy Policy outlines how we collect, use, store, and safeguard your data when using CYANIS.
+          </p>
+        </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">1. Information We Collect</h2>
           <p>When you use CYANIS, we may collect the following types of information:</p>
           <ul className="list-disc pl-6 space-y-2">
@@ -47,7 +85,7 @@ function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">2. How We Use Your Information</h2>
           <p>We use the collected data to:</p>
           <ul className="list-disc pl-6 space-y-2">
@@ -58,7 +96,7 @@ function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">3. Data Storage & Security</h2>
           <ul className="list-disc pl-6 space-y-2">
             <li>Your data is stored securely with encryption and access controls.</li>
@@ -67,7 +105,7 @@ function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">4. Your Rights & Choices</h2>
           <p>You have the right to:</p>
           <ul className="list-disc pl-6 space-y-2">
@@ -77,28 +115,28 @@ function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">5. Third-Party Services</h2>
           <p>
             CYANIS may integrate with third-party tools for additional functionalities. However, we do not share personally identifiable information with external parties beyond what is necessary to provide the service.
           </p>
         </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">6. Cookies & Tracking</h2>
           <p>
             CYANIS may use cookies or similar tracking technologies to enhance user experience. You can manage cookie preferences through your browser settings.
           </p>
         </section>
 
-        <section className="space-y-4">
+        <section className="content-block space-y-4">
           <h2 className="text-2xl font-semibold text-white">7. Policy Updates</h2>
           <p>
             We may update this Privacy Policy periodically. Continued use of CYANIS after changes are made constitutes acceptance of the revised policy.
           </p>
         </section>
 
-        <section className="mt-12 pt-8 border-t border-white/10">
+        <section className="content-block mt-12 pt-8 border-t border-white/10">
           <p className="text-white/60">
             For any questions or concerns regarding this Privacy Policy, please contact us at{' '}
             <a href="mailto:support@cyanis.xyz" className="text-white hover:text-white/80 transition-colors">
