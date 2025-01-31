@@ -23,8 +23,12 @@ try {
   process.exit(1);
 }
 
-// Middleware
-app.use(cors());
+// Updated CORS configuration for production
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*', // Allow your frontend URL in production
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Health check endpoint
@@ -62,9 +66,7 @@ app.post('/api/chat', async (req, res) => {
   } catch (error) {
     console.error('Error in chat endpoint:', error);
     
-    // Enhanced error handling with specific status codes
     if (error.response) {
-      // OpenAI API error
       const status = error.response.status || 500;
       res.status(status).json({
         error: 'OpenAI API error',
@@ -76,7 +78,6 @@ app.post('/api/chat', async (req, res) => {
         details: 'OpenAI API key is not configured'
       });
     } else {
-      // Other errors
       res.status(500).json({ 
         error: 'Internal server error',
         details: error.message 

@@ -20,9 +20,11 @@ export interface ErrorResponse {
   details: any;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export async function sendMessage(messages: Message[]): Promise<ChatResponse> {
   try {
-    const response = await fetch('http://localhost:3000/api/chat', {
+    const response = await fetch(`${API_URL}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +35,6 @@ export async function sendMessage(messages: Message[]): Promise<ChatResponse> {
     const data = await response.json();
 
     if (!response.ok) {
-      // Enhanced error handling with more specific messages
       if (response.status === 500 && data.error === 'Server configuration error') {
         throw new Error('OpenAI API key is not configured. Please check your server configuration.');
       } else if (response.status === 429) {
@@ -47,17 +48,14 @@ export async function sendMessage(messages: Message[]): Promise<ChatResponse> {
 
     return data;
   } catch (error) {
-    // Check if the error is a network error (server not running)
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      throw new Error('Unable to connect to the server. Please make sure the server is running by executing "npm run server" in your terminal.');
+      throw new Error('Unable to connect to the server. Please check if the backend server is running and accessible.');
     }
     
-    // Re-throw the error with the original message if it's already a custom error
     if (error instanceof Error) {
       throw error;
     }
     
-    // Generic error handling as a fallback
     throw new Error('An unexpected error occurred while communicating with the server.');
   }
 }
