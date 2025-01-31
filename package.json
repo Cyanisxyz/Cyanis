@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "start": "npm run build && node server/index.js"
+    "start": "node server/index.js"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
