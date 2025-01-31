@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Image, Brain, Shield, Terminal, ChevronRight, Sparkles, Search, Zap, Settings, Copy, Check } from 'lucide-react';
+import { MessageSquare, Image, Brain, Shield, Terminal, ChevronRight, Sparkles, Search, Zap, Settings, Copy, Check, Code, Users, ArrowRight, Globe, Cpu } from 'lucide-react';
 import LoadingScreen from '../components/LoadingScreen';
 
 function Home() {
@@ -35,13 +35,8 @@ function Home() {
         }
       );
 
-      // Observe all sections and cards
-      document.querySelectorAll('section, .feature-card, .capability-card').forEach((el) => {
+      document.querySelectorAll('section, .feature-card, .capability-card, .content-block').forEach((el) => {
         observer.observe(el);
-      });
-
-      // Add visible class by default to initial viewport elements
-      document.querySelectorAll('section, .feature-card, .capability-card').forEach((el) => {
         if (el.getBoundingClientRect().top < window.innerHeight) {
           el.classList.add('visible');
           el.classList.remove('invisible');
@@ -52,7 +47,7 @@ function Home() {
 
       return () => observer.disconnect();
     }
-  }, [isLoading]); // Only run after loading is complete
+  }, [isLoading]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText("COMING SOON");
@@ -135,6 +130,104 @@ function Home() {
                 <p className="text-white/70">{description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases Section */}
+      <section id="use-cases" className="max-w-7xl mx-auto px-6 py-20">
+        <div className="bg-black/80 rounded-3xl border border-white/10 p-12 backdrop-blur-sm">
+          <div className="flex items-center space-x-4 mb-12">
+            <Users className="w-8 h-8" />
+            <h2 className="text-3xl font-orbitron font-bold">Use Cases</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Code,
+                title: "Developers",
+                description: "Accelerate development with code generation, debugging assistance, and technical documentation.",
+                features: ["Code completion", "Bug fixing", "Documentation help"]
+              },
+              {
+                icon: Globe,
+                title: "Businesses",
+                description: "Streamline operations and enhance customer interactions with AI-powered solutions.",
+                features: ["Process automation", "Data analysis", "Customer support"]
+              },
+              {
+                icon: Brain,
+                title: "Researchers",
+                description: "Access comprehensive information and analysis tools for academic and scientific work.",
+                features: ["Literature review", "Data synthesis", "Research planning"]
+              }
+            ].map(({ icon: Icon, title, description, features }) => (
+              <div key={title} className="content-block space-y-6 p-6 bg-black/80 rounded-2xl border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all">
+                <div className="bg-white/5 w-12 h-12 rounded-full flex items-center justify-center">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold">{title}</h3>
+                <p className="text-white/70">{description}</p>
+                <ul className="space-y-2">
+                  {features.map((feature) => (
+                    <li key={feature} className="flex items-center space-x-2 text-white/60">
+                      <ArrowRight className="w-4 h-4" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Technology Section */}
+      <section id="technology" className="max-w-7xl mx-auto px-6 py-20">
+        <div className="bg-black/80 rounded-3xl border border-white/10 p-12 backdrop-blur-sm">
+          <div className="flex items-center space-x-4 mb-12">
+            <Cpu className="w-8 h-8" />
+            <h2 className="text-3xl font-orbitron font-bold">Technology</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="content-block space-y-6">
+              <h3 className="text-2xl font-semibold">Advanced AI Architecture</h3>
+              <p className="text-white/70">
+                Built on state-of-the-art machine learning models and neural networks, CYANIS leverages cutting-edge AI technology to deliver exceptional performance and accuracy.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Neural network processing",
+                  "Natural language understanding",
+                  "Context-aware responses",
+                  "Real-time learning capabilities"
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-white/20 rounded-full" />
+                    <span className="text-white/60">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="content-block space-y-6">
+              <h3 className="text-2xl font-semibold">Security Infrastructure</h3>
+              <p className="text-white/70">
+                CYANIS implements robust security measures to protect user data and ensure safe, reliable operation at all times.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "End-to-end encryption",
+                  "Secure data processing",
+                  "Regular security audits",
+                  "Privacy-first design"
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-white/20 rounded-full" />
+                    <span className="text-white/60">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>

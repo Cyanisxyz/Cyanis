@@ -39,7 +39,7 @@ function App() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_1px,_transparent_1.5px)] bg-[length:24px_24px] animate-grid opacity-80" />
       <div className="absolute inset-0 bg-gradient-to-r from-[hsl(205_65%_35%)]/30 to-[hsl(183_31%_26%)]/30" />
 
-      <div className="relative z-10">
+      <div className="relative z-10 min-h-screen flex flex-col">
         <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-black/80 border border-white/10 rounded-full backdrop-blur-sm py-2 px-4 z-50 header-glow">
           <div className="flex items-center space-x-8">
             <button 
@@ -62,27 +62,30 @@ function App() {
           </div>
         </div>
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/terms" element={<TermsOfUse />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/docs" element={<Documentation />} />
-        </Routes>
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/terms" element={<TermsOfUse />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/docs" element={<Documentation />} />
+          </Routes>
+        </div>
 
-        <footer className="relative z-10 w-full">
-          <div className="max-w-7xl mx-auto px-6 py-16">
-            <div className="flex flex-col md:flex-row justify-between items-start">
-              <div className="space-y-4 md:w-1/2">
+        <footer className="relative z-10 w-full border-t border-white/10">
+          <div className="container mx-auto px-6 py-8">
+            <div className="flex flex-col lg:flex-row justify-between">
+              {/* Company Info - Now positioned at the bottom left */}
+              <div className="mb-8 lg:mb-0 lg:max-w-xs">
                 <button 
                   onClick={handleLogoClick}
                   className="text-xl font-orbitron font-bold hover:text-white/80 transition-colors"
                 >
                   CYANIS
                 </button>
-                <p className="text-white/60 max-w-md">
+                <p className="text-white/60 mt-4">
                   An advanced AI platform revolutionizing human-machine interactions—bridging intelligence and innovation.
                 </p>
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 mt-4">
                   <a href="https://github.com/Cyanisxyz/Cyanis" className="text-white/60 hover:text-white transition-colors">
                     <Github className="w-5 h-5" />
                   </a>
@@ -92,15 +95,46 @@ function App() {
                 </div>
               </div>
 
-              <div className="mt-8 md:mt-0 space-y-4">
-                <ul className="space-y-2">
-                  <li>
-                    <Link to="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Use</Link>
-                  </li>
-                  <li>
-                    <Link to="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
-                  </li>
-                </ul>
+              {/* Footer Links - Positioned to the right */}
+              <div className="grid grid-cols-3 gap-8 lg:gap-16">
+                {/* Resources */}
+                <div>
+                  <h3 className="font-semibold text-white/80 mb-4">Resources</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link to="/docs" className="text-white/60 hover:text-white transition-colors">Documentation</Link>
+                    </li>
+                    <li>
+                      <a href="/#features" className="text-white/60 hover:text-white transition-colors">Features</a>
+                    </li>
+                    <li>
+                      <a href="/#capabilities" className="text-white/60 hover:text-white transition-colors">Capabilities</a>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Legal */}
+                <div>
+                  <h3 className="font-semibold text-white/80 mb-4">Legal</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link to="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Use</Link>
+                    </li>
+                    <li>
+                      <Link to="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Contact */}
+                <div>
+                  <h3 className="font-semibold text-white/80 mb-4">Contact</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <a href="mailto:support@cyanis.xyz" className="text-white/60 hover:text-white transition-colors">support@cyanis.xyz</a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
