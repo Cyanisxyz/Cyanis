@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, Paperclip, Menu, X, Plus, MessageSquare, Share2, Pencil, Trash2, Search, Copy, Check } from 'lucide-react';
+import { Send, Sparkles, Paperclip, Menu, X, Plus, MessageSquare, Share2, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoadingScreen from '../components/LoadingScreen';
+import { sendMessage, type Message as ApiMessage } from '../lib/api';
 
 interface Chat {
   id: string;
@@ -14,6 +15,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  error?: boolean;
 }
 
 interface GroupedChats {
@@ -153,19 +155,48 @@ function Agent() {
     setInput('');
     setIsProcessing(true);
 
-    setTimeout(() => {
+    try {
+      const apiMessages: ApiMessage[] = currentChat?.messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      })) || [];
+
+      apiMessages.push({
+        role: 'user',
+        content: input
+      });
+
+      const response = await sendMessage(apiMessages);
+
       const aiMessage: Message = {
         role: 'assistant',
-        content: 'I understand your request. However, I am currently in demonstration mode and cannot process actual queries. In a production environment, I would analyze your input and provide a relevant, helpful response.',
+        content: response.message.content,
         timestamp: new Date()
       };
+
       setChats(prev => prev.map(chat => 
         chat.id === currentChatId 
           ? { ...chat, messages: [...chat.messages, aiMessage] }
           : chat
       ));
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.',
+        timestamp: new Date(),
+        error: true
+      };
+
+      setChats(prev => prev.map(chat => 
+        chat.id === currentChatId 
+          ? { ...chat, messages: [...chat.messages, errorMessage] }
+          : chat
+      ));
+    } finally {
       setIsProcessing(false);
-    }, 1000);
+    }
   };
 
   const handleFileUpload = () => {
@@ -381,17 +412,23 @@ function Agent() {
                 >
                   <div className="flex items-start space-x-3 max-w-[85%] w-fit">
                     {message.role === 'assistant' && (
-                      <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-5 h-5" />
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        message.error ? 'bg-red-600' : 'bg-indigo-600'
+                      }`}>
+                        {message.error ? (
+                          <AlertTriangle className="w-5 h-5" />
+                        ) : (
+                          <Sparkles className="w-5 h-5" />
+                        )}
                       </div>
                     )}
                     <div className={`flex-1 break-words ${
                       message.role === 'user' 
                         ? 'bg-black/20 backdrop-blur-sm rounded-2xl px-4 py-3 text-white border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
-                        : 'text-white'
+                        : `text-white ${message.error ? 'text-red-400' : ''}`
                     } ${message.role === 'user' ? 'order-first' : ''}`}>
                       <div className="overflow-wrap-anywhere whitespace-pre-wrap">{message.content}</div>
-                      {message.role === 'assistant' && (
+                      {message.role === 'assistant' && !message.error && (
                         <button
                           onClick={() => handleCopyMessage(message.content, `${index}`)}
                           className="flex items-center space-x-2 text-white/40 hover:text-white/60 transition-colors text-sm mt-2"
