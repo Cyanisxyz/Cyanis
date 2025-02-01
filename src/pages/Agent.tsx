@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, Paperclip, Menu, X, Plus, MessageSquare, Share2, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
+import { Send, Sparkles, Paperclip, PanelLeftClose, PanelLeftOpen, Plus, MessageSquare, Share2, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoadingScreen from '../components/LoadingScreen';
 import { sendMessage, type Message as ApiMessage } from '../lib/api';
@@ -274,7 +274,7 @@ function Agent() {
                   onClick={() => setIsSidebarVisible(false)}
                   className="w-10 h-10 flex items-center justify-center bg-black/50 hover:bg-white/5 text-white rounded-lg border border-white/10 transition-all hover:border-white/20 button-glow"
                 >
-                  <Menu className="w-5 h-5" />
+                  <PanelLeftClose className="w-5 h-5" />
                 </button>
                 <div className="flex items-center space-x-2">
                   <button
@@ -391,7 +391,7 @@ function Agent() {
           onClick={() => setIsSidebarVisible(true)}
           className="fixed top-4 left-4 z-50 w-10 h-10 flex items-center justify-center bg-black/50 hover:bg-white/5 text-white rounded-lg border border-white/10 transition-all hover:border-white/20 button-glow"
         >
-          <Menu className="w-5 h-5" />
+          <PanelLeftOpen className="w-5 h-5" />
         </button>
       )}
 

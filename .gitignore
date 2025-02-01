@@ -21,6 +21,7 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
+.bolt/
 *.sw?
 .env
 .env.production
