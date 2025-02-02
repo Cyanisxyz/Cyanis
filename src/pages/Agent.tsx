@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, Paperclip, PanelLeftClose, PanelLeftOpen, Plus, MessageSquare, Share2, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
+import { ArrowUp, Sparkles, Paperclip, PanelLeftClose, X, Plus, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoadingScreen from '../components/LoadingScreen';
 import { sendMessage, type Message as ApiMessage } from '../lib/api';
@@ -226,16 +226,6 @@ function Agent() {
     }
   };
 
-  const shareChat = (chatId: string) => {
-    const chat = chats.find(c => c.id === chatId);
-    if (chat) {
-      const chatContent = chat.messages.map(m => 
-        `${m.role === 'assistant' ? 'CYANIS' : 'You'}: ${m.content}`
-      ).join('\n\n');
-      navigator.clipboard.writeText(chatContent);
-    }
-  };
-
   const startEditing = (chatId: string, currentName: string) => {
     setEditingChatId(chatId);
     setEditingName(currentName);
@@ -321,51 +311,27 @@ function Agent() {
                       }`}
                       onClick={() => setCurrentChatId(chat.id)}
                     >
-                      <MessageSquare className="w-4 h-4 flex-shrink-0" />
-                      {editingChatId === chat.id ? (
-                        <input
-                          type="text"
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          onBlur={saveEditing}
-                          onKeyDown={(e) => e.key === 'Enter' && saveEditing()}
-                          className="flex-1 bg-transparent border-none outline-none text-white text-sm"
-                          autoFocus
-                        />
-                      ) : (
-                        <>
-                          <span className="flex-1 truncate text-sm">{chat.name}</span>
-                          <div className="hidden group-hover:flex items-center space-x-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEditing(chat.id, chat.name);
-                              }}
-                              className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-                            >
-                              <Pencil className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                shareChat(chat.id);
-                              }}
-                              className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-                            >
-                              <Share2 className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteChat(chat.id);
-                              }}
-                              className="p-1 hover:bg-white/10 rounded-lg transition-colors text-red-400"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </>
-                      )}
+                      <span className="flex-1 truncate text-sm">{chat.name}</span>
+                      <div className="hidden group-hover:flex items-center space-x-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            startEditing(chat.id, chat.name);
+                          }}
+                          className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteChat(chat.id);
+                          }}
+                          className="p-1 hover:bg-white/10 rounded-lg transition-colors text-red-400"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -391,7 +357,7 @@ function Agent() {
           onClick={() => setIsSidebarVisible(true)}
           className="fixed top-4 left-4 z-50 w-10 h-10 flex items-center justify-center bg-black/50 hover:bg-white/5 text-white rounded-lg border border-white/10 transition-all hover:border-white/20 button-glow"
         >
-          <PanelLeftOpen className="w-5 h-5" />
+          <PanelLeftClose className="w-5 h-5" />
         </button>
       )}
 
@@ -399,65 +365,59 @@ function Agent() {
       <main className="relative flex-1 flex flex-col h-screen overflow-hidden">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="max-w-2xl mx-auto pt-8 pb-4 px-[13px] space-y-6">
-            {!currentChat?.messages.length ? (
-              <div className="flex items-center justify-center min-h-[200px]">
-                <p className="text-white/40">No messages yet</p>
-              </div>
-            ) : (
-              currentChat?.messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className="flex items-start space-x-3 max-w-[85%] w-fit">
-                    {message.role === 'assistant' && (
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        message.error ? 'bg-red-600' : 'bg-indigo-600'
-                      }`}>
-                        {message.error ? (
-                          <AlertTriangle className="w-5 h-5" />
-                        ) : (
-                          <Sparkles className="w-5 h-5" />
-                        )}
-                      </div>
-                    )}
-                    <div className={`flex-1 break-words ${
-                      message.role === 'user' 
-                        ? 'bg-black/20 backdrop-blur-sm rounded-2xl px-4 py-3 text-white border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
-                        : `text-white ${message.error ? 'text-red-400' : ''}`
-                    } ${message.role === 'user' ? 'order-first' : ''}`}>
-                      <div className="overflow-wrap-anywhere whitespace-pre-wrap">{message.content}</div>
-                      {message.role === 'assistant' && !message.error && (
-                        <button
-                          onClick={() => handleCopyMessage(message.content, `${index}`)}
-                          className="flex items-center space-x-2 text-white/40 hover:text-white/60 transition-colors text-sm mt-2"
-                        >
-                          {copiedMessageId === `${index}` ? (
-                            <>
-                              <Check className="w-4 h-4" />
-                              <span>Copied!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-4 h-4" />
-                              <span>Copy</span>
-                            </>
-                          )}
-                        </button>
+          <div className="max-w-2xl mx-auto pt-8 pb-4 px-[13px] space-y-5">
+            {currentChat?.messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className="flex items-start space-x-3 max-w-[85%] w-fit">
+                  {message.role === 'assistant' && (
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      message.error ? 'bg-red-600' : 'bg-indigo-600'
+                    }`}>
+                      {message.error ? (
+                        <AlertTriangle className="w-4 h-4" />
+                      ) : (
+                        <Sparkles className="w-4 h-4" />
                       )}
                     </div>
+                  )}
+                  <div className={`flex-1 break-words ${
+                    message.role === 'user' 
+                      ? 'bg-black/20 backdrop-blur-sm rounded-2xl px-4 py-2.5 text-white border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
+                      : `text-white ${message.error ? 'text-red-400' : ''}`
+                  } ${message.role === 'user' ? 'order-first' : ''}`}>
+                    <div className="overflow-wrap-anywhere whitespace-pre-wrap text-[15px]">{message.content}</div>
+                    {message.role === 'assistant' && !message.error && (
+                      <button
+                        onClick={() => handleCopyMessage(message.content, `${index}`)}
+                        className="flex items-center space-x-2 text-white/40 hover:text-white/60 transition-colors text-sm mt-2"
+                      >
+                        {copiedMessageId === `${index}` ? (
+                          <>
+                            <Check className="w-4 h-4" />
+                            <span>Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4" />
+                            <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
             {isProcessing && (
               <div className="flex justify-start">
                 <div className="flex items-start space-x-3 max-w-[85%]">
-                  <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
-                    <Sparkles className="w-5 h-5 animate-pulse" />
+                  <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 animate-pulse" />
                   </div>
-                  <p className="text-white">Thinking...</p>
+                  <p className="text-[15px] text-white">Thinking...</p>
                 </div>
               </div>
             )}
@@ -499,9 +459,9 @@ function Agent() {
               <button
                 type="submit"
                 disabled={!input.trim() || isProcessing}
-                className="absolute right-3 bottom-3 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
+                className="absolute right-3 bottom-3 w-8 h-8 flex items-center justify-center bg-white hover:bg-white/90 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
               >
-                <Send className="w-5 h-5" />
+                <ArrowUp className="w-4 h-4 text-black" />
               </button>
             </div>
           </form>
