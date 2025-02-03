@@ -12,7 +12,7 @@ interface Chat {
 }
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   error?: boolean;
@@ -145,6 +145,35 @@ function Agent() {
     setTimeout(() => setCopiedMessageId(null), 2000);
   };
 
+  const updateChatName = async (chatId: string, messages: Message[]) => {
+    if (messages.length < 2) return;
+
+    try {
+      const summaryRequest: ApiMessage[] = [
+        {
+          role: 'system',
+          content: 'Please provide a very brief 2-4 word summary of this conversation that can be used as a title. Only respond with the title, nothing else.'
+        },
+        ...messages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          file: msg.file
+        }))
+      ];
+
+      const response = await sendMessage(summaryRequest);
+      const newTitle = response.message.content.trim();
+
+      setChats(prev => prev.map(chat =>
+        chat.id === chatId
+          ? { ...chat, name: newTitle }
+          : chat
+      ));
+    } catch (error) {
+      console.error('Error generating chat summary:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!input.trim() && !selectedFile) || isProcessing) return;
@@ -163,9 +192,11 @@ function Agent() {
       };
     }
 
+    const updatedMessages = [...(currentChat?.messages || []), message];
+
     setChats(prev => prev.map(chat => 
       chat.id === currentChatId 
-        ? { ...chat, messages: [...chat.messages, message] }
+        ? { ...chat, messages: updatedMessages }
         : chat
     ));
     setInput('');
@@ -174,17 +205,11 @@ function Agent() {
     setIsProcessing(true);
 
     try {
-      const apiMessages: ApiMessage[] = currentChat?.messages.map(msg => ({
+      const apiMessages: ApiMessage[] = updatedMessages.map(msg => ({
         role: msg.role,
         content: msg.content,
         file: msg.file
-      })) || [];
-
-      apiMessages.push({
-        role: 'user',
-        content: message.content,
-        file: message.file
-      });
+      }));
 
       const response = await sendMessage(apiMessages);
 
@@ -194,11 +219,15 @@ function Agent() {
         timestamp: new Date()
       };
 
+      const finalMessages = [...updatedMessages, aiMessage];
+
       setChats(prev => prev.map(chat => 
         chat.id === currentChatId 
-          ? { ...chat, messages: [...chat.messages, aiMessage] }
+          ? { ...chat, messages: finalMessages }
           : chat
       ));
+
+      await updateChatName(currentChatId, finalMessages);
     } catch (error) {
       console.error('Error getting AI response:', error);
       
@@ -211,7 +240,7 @@ function Agent() {
 
       setChats(prev => prev.map(chat => 
         chat.id === currentChatId 
-          ? { ...chat, messages: [...chat.messages, errorMessage] }
+          ? { ...chat, messages: [...updatedMessages, errorMessage] }
           : chat
       ));
     } finally {
@@ -238,7 +267,6 @@ function Agent() {
       setFileContent(null);
     }
     
-    // Clear the file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -320,15 +348,12 @@ function Agent() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-black">
-      {/* Background Effects */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_1px,_transparent_1.5px)] bg-[length:24px_24px] animate-grid opacity-80" />
       <div className="fixed inset-0 bg-gradient-to-r from-[hsl(205_65%_35%)]/30 to-[hsl(183_31%_26%)]/30" />
 
-      {/* Sidebar */}
       {isSidebarVisible && (
         <aside className="fixed md:sticky top-0 z-40 w-64 h-screen bg-black/90 backdrop-blur-xl border-r border-white/10 transition-transform duration-200">
           <div className="flex flex-col h-full">
-            {/* Header with buttons */}
             <div className="p-2">
               <div className="flex items-center justify-between">
                 <button
@@ -369,7 +394,6 @@ function Agent() {
               )}
             </div>
 
-            {/* Chat List */}
             <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-4">
               {Object.entries(filteredAndGroupedChats).map(([group, groupChats]) => (
                 <div key={group} className="space-y-1">
@@ -409,7 +433,6 @@ function Agent() {
               ))}
             </div>
 
-            {/* Back to Home */}
             <div className="p-2 mt-auto">
               <Link 
                 to="/" 
@@ -422,7 +445,6 @@ function Agent() {
         </aside>
       )}
 
-      {/* Show menu button when sidebar is hidden */}
       {!isSidebarVisible && (
         <button
           onClick={() => setIsSidebarVisible(true)}
@@ -432,9 +454,7 @@ function Agent() {
         </button>
       )}
 
-      {/* Main Content */}
       <main className="relative flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Messages Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="max-w-2xl mx-auto pt-8 pb-4 px-[13px] space-y-5">
             {currentChat?.messages.map((message, index) => (
@@ -497,7 +517,6 @@ function Agent() {
           </div>
         </div>
 
-        {/* Input Area */}
         <div className="px-3 pb-2">
           <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
             {selectedFile && (
