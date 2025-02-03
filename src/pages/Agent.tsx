@@ -16,6 +16,11 @@ interface Message {
   content: string;
   timestamp: Date;
   error?: boolean;
+  file?: {
+    name: string;
+    type: string;
+    content: string;
+  };
 }
 
 interface GroupedChats {
@@ -23,6 +28,9 @@ interface GroupedChats {
 }
 
 function Agent() {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileContent, setFileContent] = useState<string | null>(null);
+  const [fileMessage, setFileMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [chats, setChats] = useState<Chat[]>([{
     id: '1',
@@ -139,31 +147,43 @@ function Agent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isProcessing) return;
+    if ((!input.trim() && !selectedFile) || isProcessing) return;
 
-    const userMessage: Message = {
+    let message: Message = {
       role: 'user',
-      content: input,
+      content: input.trim() || (selectedFile ? `Uploaded file: ${selectedFile.name}` : ''),
       timestamp: new Date()
     };
 
+    if (selectedFile && fileContent) {
+      message.file = {
+        name: selectedFile.name,
+        type: selectedFile.type,
+        content: fileContent
+      };
+    }
+
     setChats(prev => prev.map(chat => 
       chat.id === currentChatId 
-        ? { ...chat, messages: [...chat.messages, userMessage] }
+        ? { ...chat, messages: [...chat.messages, message] }
         : chat
     ));
     setInput('');
+    setSelectedFile(null);
+    setFileContent(null);
     setIsProcessing(true);
 
     try {
       const apiMessages: ApiMessage[] = currentChat?.messages.map(msg => ({
         role: msg.role,
-        content: msg.content
+        content: msg.content,
+        file: msg.file
       })) || [];
 
       apiMessages.push({
         role: 'user',
-        content: input
+        content: message.content,
+        file: message.file
       });
 
       const response = await sendMessage(apiMessages);
@@ -199,8 +219,59 @@ function Agent() {
     }
   };
 
-  const handleFileUpload = () => {
-    fileInputRef.current?.click();
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFileContent(e.target?.result as string);
+    };
+
+    if (file.type.startsWith('text/')) {
+      reader.readAsText(file);
+    } else if (file.type.startsWith('image/')) {
+      reader.readAsDataURL(file);
+    } else {
+      setFileContent(null);
+    }
+    
+    // Clear the file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleCancelFileUpload = () => {
+    setSelectedFile(null);
+    setFileContent(null);
+  };
+
+  const renderFileContent = (file: Message['file']) => {
+    if (!file) return null;
+
+    if (file.type.startsWith('image/')) {
+      return (
+        <div className="mt-2">
+          <img 
+            src={file.content} 
+            alt={file.name}
+            className="max-w-full rounded-lg border border-white/10"
+            style={{ maxHeight: '200px' }}
+          />
+        </div>
+      );
+    } else if (file.type.startsWith('text/')) {
+      return (
+        <div className="mt-2 p-3 bg-black/30 rounded-lg border border-white/10 font-mono text-sm overflow-x-auto">
+          {file.content}
+        </div>
+      );
+    }
+    
+    return null;
   };
 
   const startNewChat = () => {
@@ -389,6 +460,7 @@ function Agent() {
                       : `text-white ${message.error ? 'text-red-400' : ''}`
                   } ${message.role === 'user' ? 'order-first' : ''}`}>
                     <div className="overflow-wrap-anywhere whitespace-pre-wrap text-[15px]">{message.content}</div>
+                    {message.file && renderFileContent(message.file)}
                     {message.role === 'assistant' && !message.error && (
                       <button
                         onClick={() => handleCopyMessage(message.content, `${index}`)}
@@ -428,6 +500,27 @@ function Agent() {
         {/* Input Area */}
         <div className="px-3 pb-2">
           <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
+            {selectedFile && (
+              <div className="mb-2 p-2 bg-black/20 backdrop-blur-sm rounded-lg border border-white/10">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-white/70">{selectedFile.name}</span>
+                  <button
+                    type="button"
+                    onClick={handleCancelFileUpload}
+                    className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                {fileContent && selectedFile.type.startsWith('image/') && (
+                  <img
+                    src={fileContent}
+                    alt="Preview"
+                    className="mt-2 max-h-32 rounded-lg"
+                  />
+                )}
+              </div>
+            )}
             <div className="relative bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
               <textarea
                 ref={textareaRef}
@@ -451,14 +544,14 @@ function Agent() {
               <button
                 type="button"
                 className="absolute left-3 bottom-3 w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors"
-                onClick={handleFileUpload}
+                onClick={() => fileInputRef.current?.click()}
               >
                 <Paperclip className="w-5 h-5 text-white/60" />
               </button>
               
               <button
                 type="submit"
-                disabled={!input.trim() || isProcessing}
+                disabled={!input.trim() && !selectedFile || isProcessing}
                 className="absolute right-3 bottom-3 w-8 h-8 flex items-center justify-center bg-white hover:bg-white/90 disabled:bg-white/5 disabled:cursor-not-allowed rounded-full transition-all"
               >
                 <ArrowUp className="w-4 h-4 text-black" />
@@ -473,9 +566,7 @@ function Agent() {
         ref={fileInputRef}
         className="hidden"
         accept="image/*,.pdf,.doc,.docx,.txt"
-        onChange={(e) => {
-          console.log('File selected:', e.target.files?.[0]);
-        }}
+        onChange={handleFileSelect}
       />
     </div>
   );

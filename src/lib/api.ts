@@ -1,6 +1,11 @@
 export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  file?: {
+    name: string;
+    type: string;
+    content: string;
+  };
 }
 
 export interface ChatResponse {

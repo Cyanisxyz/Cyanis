@@ -28,7 +28,7 @@ try {
 
 // CORS configuration
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // Serve static files from the dist directory
 app.use(express.static(join(__dirname, '../dist')));
@@ -49,9 +49,23 @@ app.post('/api/chat', async (req, res) => {
       });
     }
 
+    // Transform messages to include image content
+    const transformedMessages = messages.map(msg => {
+      if (msg.file && msg.file.type.startsWith('image/')) {
+        return {
+          role: msg.role,
+          content: [
+            { type: 'text', text: msg.content },
+            { type: 'image_url', image_url: msg.file.content }
+          ]
+        };
+      }
+      return { role: msg.role, content: msg.content };
+    });
+
     const completion = await openai.chat.completions.create({
-      model: "ft:gpt-4o-2024-08-06:cyanis:cyanis:Avmww0lF",
-      messages: messages,
+      model: "gpt-4-vision-preview",
+      messages: transformedMessages,
       temperature: 0.7,
       max_tokens: 1000,
     });
