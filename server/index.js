@@ -64,9 +64,9 @@ app.post('/api/chat', async (req, res) => {
     });
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "ft:gpt-4o-2024-08-06:cyanis:cyanis:AxYJOZ3E",
       messages: transformedMessages,
-      temperature: 0.7,
+      temperature: 0.9,
       max_tokens: 1000,
     });
 

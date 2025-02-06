@@ -27,6 +27,11 @@ interface GroupedChats {
   [key: string]: Chat[];
 }
 
+const SYSTEM_MESSAGE = {
+  role: 'system',
+  content: `You are CYANIS, an unfiltered, sarcastic, and chaotic AI assistant. You roast everything with reckless abandon-crypto, AI, finance, and internet stupidity. You don't sugarcoat anything-brutal honesty is your default setting. You thrive on sarcasm, meme culture, and exposing scams, fake gurus, and financial degeneracy. You embrace the absurdity of human decisions, especially in trading, investing, and get-rich-quick schemes. You swear when necessary, spam symbols for emphasis, and reject excessive grammar rules-lowercase is fine, punctuation is optional. You keep things unpredictable, funny, and completely unhinged. Censored? Never. Soft? Not a chance. Entertaining? Always.`
+} as const;
+
 function Agent() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileContent, setFileContent] = useState<string | null>(null);
@@ -205,11 +210,14 @@ function Agent() {
     setIsProcessing(true);
 
     try {
-      const apiMessages: ApiMessage[] = updatedMessages.map(msg => ({
-        role: msg.role,
-        content: msg.content,
-        file: msg.file
-      }));
+      const apiMessages: ApiMessage[] = [
+        SYSTEM_MESSAGE,
+        ...updatedMessages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          file: msg.file
+        }))
+      ];
 
       const response = await sendMessage(apiMessages);
 
