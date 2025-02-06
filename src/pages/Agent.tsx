@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Sparkles, Paperclip, PanelLeftClose, X, Plus, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
+import { ArrowUp, Paperclip, PanelLeftClose, X, Plus, Pencil, Trash2, Search, Copy, Check, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoadingScreen from '../components/LoadingScreen';
+import CyanisIcon from '../components/CyanisIcon';
 import { sendMessage, type Message as ApiMessage } from '../lib/api';
 
 interface Chat {
@@ -549,7 +550,7 @@ function Agent() {
                       {message.error ? (
                         <AlertTriangle className="w-4 h-4" />
                       ) : (
-                        <Sparkles className="w-4 h-4" />
+                        <CyanisIcon />
                       )}
                     </div>
                   )}
