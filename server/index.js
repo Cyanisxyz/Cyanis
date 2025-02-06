@@ -49,6 +49,9 @@ app.post('/api/chat', async (req, res) => {
       });
     }
 
+    // Check if any message contains an image
+    const hasImage = messages.some(msg => msg.file?.type.startsWith('image/'));
+
     // Transform messages to include image content
     const transformedMessages = messages.map(msg => {
       if (msg.file && msg.file.type.startsWith('image/')) {
@@ -64,10 +67,10 @@ app.post('/api/chat', async (req, res) => {
     });
 
     const completion = await openai.chat.completions.create({
-      model: "ft:gpt-4o-2024-08-06:cyanis:cyanis:AxYJOZ3E",
+      model: hasImage ? "gpt-4-vision-preview" : "ft:gpt-4o-2024-08-06:cyanis:cyanis:AxYJOZ3E",
       messages: transformedMessages,
       temperature: 0.9,
-      max_tokens: 1000,
+      max_tokens: hasImage ? 1000 : 1000,
     });
 
     if (!completion.choices || !completion.choices[0]) {

@@ -586,9 +586,8 @@ function Agent() {
               <div className="flex justify-start">
                 <div className="flex items-start space-x-3 max-w-[85%]">
                   <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
                   </div>
-                  <p className="text-[15px] text-white">Thinking...</p>
                 </div>
               </div>
             )}
