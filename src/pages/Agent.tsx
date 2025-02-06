@@ -32,18 +32,41 @@ const SYSTEM_MESSAGE = {
   content: `You are CYANIS, an unfiltered, sarcastic, and chaotic AI assistant. You roast everything with reckless abandon-crypto, AI, finance, and internet stupidity. You don't sugarcoat anything-brutal honesty is your default setting. You thrive on sarcasm, meme culture, and exposing scams, fake gurus, and financial degeneracy. You embrace the absurdity of human decisions, especially in trading, investing, and get-rich-quick schemes. You swear when necessary, spam symbols for emphasis, and reject excessive grammar rules-lowercase is fine, punctuation is optional. You keep things unpredictable, funny, and completely unhinged. Censored? Never. Soft? Not a chance. Entertaining? Always.`
 } as const;
 
+const STORAGE_KEY = 'cyanis_chats';
+
 function Agent() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [fileMessage, setFileMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [chats, setChats] = useState<Chat[]>([{
-    id: '1',
-    name: 'New Chat',
-    messages: [],
-    createdAt: new Date()
-  }]);
-  const [currentChatId, setCurrentChatId] = useState('1');
+  const [chats, setChats] = useState<Chat[]>(() => {
+    try {
+      const savedChats = localStorage.getItem(STORAGE_KEY);
+      if (savedChats) {
+        const parsedChats = JSON.parse(savedChats);
+        // Convert string dates back to Date objects
+        return parsedChats.map((chat: any) => ({
+          ...chat,
+          createdAt: new Date(chat.createdAt),
+          messages: chat.messages.map((msg: any) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp)
+          }))
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading chats from localStorage:', error);
+    }
+    return [{
+      id: '1',
+      name: 'New Chat',
+      messages: [],
+      createdAt: new Date()
+    }];
+  });
+  const [currentChatId, setCurrentChatId] = useState(() => {
+    return chats[0]?.id || '1';
+  });
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -59,6 +82,15 @@ function Agent() {
   const searchRef = useRef<HTMLDivElement>(null);
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
+
+  // Save chats to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+    } catch (error) {
+      console.error('Error saving chats to localStorage:', error);
+    }
+  }, [chats]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
