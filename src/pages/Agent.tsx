@@ -9,6 +9,8 @@ interface Chat {
   name: string;
   messages: Message[];
   createdAt: Date;
+  summarized?: boolean;
+  editedName?: boolean;
 }
 
 interface Message {
@@ -44,7 +46,6 @@ function Agent() {
       const savedChats = localStorage.getItem(STORAGE_KEY);
       if (savedChats) {
         const parsedChats = JSON.parse(savedChats);
-        // Convert string dates back to Date objects
         return parsedChats.map((chat: any) => ({
           ...chat,
           createdAt: new Date(chat.createdAt),
@@ -83,7 +84,6 @@ function Agent() {
 
   const currentChat = chats.find(chat => chat.id === currentChatId);
 
-  // Save chats to localStorage whenever they change
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
@@ -183,7 +183,8 @@ function Agent() {
   };
 
   const updateChatName = async (chatId: string, messages: Message[]) => {
-    if (messages.length < 2) return;
+    const chat = chats.find(c => c.id === chatId);
+    if (!chat || chat.summarized || messages.length < 2) return;
 
     try {
       const summaryRequest: ApiMessage[] = [
@@ -203,7 +204,7 @@ function Agent() {
 
       setChats(prev => prev.map(chat =>
         chat.id === chatId
-          ? { ...chat, name: newTitle }
+          ? { ...chat, name: newTitle, summarized: true }
           : chat
       ));
     } catch (error) {
@@ -267,7 +268,9 @@ function Agent() {
           : chat
       ));
 
-      await updateChatName(currentChatId, finalMessages);
+      if (finalMessages.length === 2) {
+        await updateChatName(currentChatId, finalMessages);
+      }
     } catch (error) {
       console.error('Error getting AI response:', error);
       
@@ -374,12 +377,22 @@ function Agent() {
     if (editingChatId && editingName.trim()) {
       setChats(prev => prev.map(chat =>
         chat.id === editingChatId
-          ? { ...chat, name: editingName.trim() }
+          ? { ...chat, name: editingName.trim(), editedName: true }
           : chat
       ));
     }
     setEditingChatId(null);
     setEditingName('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveEditing();
+    } else if (e.key === 'Escape') {
+      setEditingChatId(null);
+      setEditingName('');
+    }
   };
 
   if (isLoading) {
@@ -444,29 +457,55 @@ function Agent() {
                       className={`group relative flex items-center space-x-2 hover:bg-white/5 rounded-lg px-3 py-2 transition-colors cursor-pointer ${
                         currentChatId === chat.id ? 'bg-white/10' : ''
                       }`}
-                      onClick={() => setCurrentChatId(chat.id)}
+                      onClick={() => {
+                        if (editingChatId !== chat.id) {
+                          setCurrentChatId(chat.id);
+                        }
+                      }}
                     >
-                      <span className="flex-1 truncate text-sm">{chat.name}</span>
-                      <div className="hidden group-hover:flex items-center space-x-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            startEditing(chat.id, chat.name);
-                          }}
-                          className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-                        >
-                          <Pencil className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteChat(chat.id);
-                          }}
-                          className="p-1 hover:bg-white/10 rounded-lg transition-colors text-red-400"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
+                      {editingChatId === chat.id ? (
+                        <input
+                          type="text"
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          onBlur={saveEditing}
+                          onKeyDown={handleKeyDown}
+                          className="flex-1 bg-black/50 text-white text-sm rounded px-2 py-1 outline-none border border-white/20 focus:border-white/40"
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <>
+                          <span className="flex-1 truncate text-sm">
+                            {chat.name}
+                            {chat.editedName && (
+                              <span className="ml-2 text-xs text-white/40">(edited)</span>
+                            )}
+                          </span>
+                          <div className="hidden group-hover:flex items-center space-x-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startEditing(chat.id, chat.name);
+                              }}
+                              className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                              title="Edit chat name"
+                            >
+                              <Pencil className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteChat(chat.id);
+                              }}
+                              className="p-1 hover:bg-white/10 rounded-lg transition-colors text-red-400"
+                              title="Delete chat"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
