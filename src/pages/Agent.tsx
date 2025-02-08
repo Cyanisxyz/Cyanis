@@ -544,13 +544,13 @@ function Agent() {
               >
                 <div className="flex items-start space-x-3 max-w-[85%] w-fit">
                   {message.role === 'assistant' && (
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                       message.error ? 'bg-red-600' : 'bg-black'
                     }`}>
                       {message.error ? (
-                        <AlertTriangle className="w-4 h-4" />
+                        <AlertTriangle className="w-6 h-6" />
                       ) : (
-                        <CyanisIcon />
+                        <CyanisIcon className="w-10 h-10" />
                       )}
                     </div>
                   )}
@@ -586,8 +586,8 @@ function Agent() {
             {isProcessing && (
               <div className="flex justify-start">
                 <div className="flex items-start space-x-3 max-w-[85%]">
-                  <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
-                    <div className="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                  <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
                   </div>
                 </div>
               </div>
