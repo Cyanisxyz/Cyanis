@@ -67,7 +67,7 @@ app.post('/api/chat', async (req, res) => {
     });
 
     const completion = await openai.chat.completions.create({
-      model: hasImage ? "gpt-4-vision-preview" : "ft:gpt-4o-2024-08-06:cyanis:cyanis:AxYJOZ3E",
+      model: hasImage ? "gpt-4" : "ft:gpt-4o-2024-08-06:cyanis:cyanis:AxYJOZ3E",
       messages: transformedMessages,
       temperature: 0.9,
       max_tokens: hasImage ? 1000 : 1000,
