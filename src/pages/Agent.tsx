@@ -24,8 +24,6 @@ interface Message {
     type: string;
     content: string;
   };
-  isTyping?: boolean;
-  displayContent?: string;
 }
 
 interface GroupedChats {
@@ -80,7 +78,6 @@ function Agent() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-  const [typingSpeed] = useState(30);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -216,42 +213,6 @@ function Agent() {
     }
   };
 
-  const animateTyping = async (messages: Message[], newMessage: Message) => {
-    const updatedMessages = [...messages];
-    const messageIndex = updatedMessages.length - 1;
-    const content = newMessage.content;
-    let currentText = '';
-    
-    updatedMessages[messageIndex] = {
-      ...newMessage,
-      isTyping: true,
-      displayContent: ''
-    };
-    
-    setChats(prev => prev.map(chat => 
-      chat.id === currentChatId 
-        ? { ...chat, messages: updatedMessages }
-        : chat
-    ));
-
-    for (let i = 0; i <= content.length; i++) {
-      currentText = content.slice(0, i);
-      updatedMessages[messageIndex] = {
-        ...newMessage,
-        isTyping: i < content.length,
-        displayContent: currentText
-      };
-      
-      setChats(prev => prev.map(chat => 
-        chat.id === currentChatId 
-          ? { ...chat, messages: updatedMessages }
-          : chat
-      ));
-      
-      await new Promise(resolve => setTimeout(resolve, typingSpeed));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!input.trim() && !selectedFile) || isProcessing) return;
@@ -302,7 +263,11 @@ function Agent() {
 
       const finalMessages = [...updatedMessages, aiMessage];
 
-      await animateTyping(updatedMessages, aiMessage);
+      setChats(prev => prev.map(chat => 
+        chat.id === currentChatId 
+          ? { ...chat, messages: finalMessages }
+          : chat
+      ));
 
       if (finalMessages.length === 2) {
         await updateChatName(currentChatId, finalMessages);
@@ -594,14 +559,9 @@ function Agent() {
                       ? 'bg-black/20 backdrop-blur-sm rounded-2xl px-4 py-2.5 text-white border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
                       : `text-white ${message.error ? 'text-red-400' : ''}`
                   } ${message.role === 'user' ? 'order-first' : ''}`}>
-                    <div className="overflow-wrap-anywhere whitespace-pre-wrap text-[15px]">
-                      {message.displayContent || message.content}
-                      {message.isTyping && (
-                        <span className="inline-block w-2 h-4 bg-white/60 ml-1 animate-pulse" />
-                      )}
-                    </div>
+                    <div className="overflow-wrap-anywhere whitespace-pre-wrap text-[15px]">{message.content}</div>
                     {message.file && renderFileContent(message.file)}
-                    {message.role === 'assistant' && !message.error && !message.isTyping && (
+                    {message.role === 'assistant' && !message.error && (
                       <button
                         onClick={() => handleCopyMessage(message.content, `${index}`)}
                         className="flex items-center space-x-2 text-white/40 hover:text-white/60 transition-colors text-sm mt-2"
