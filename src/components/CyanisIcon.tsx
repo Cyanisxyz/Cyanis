@@ -7,7 +7,7 @@ interface CyanisIconProps {
 function CyanisIcon({ className = "w-4 h-4" }: CyanisIconProps) {
   return (
     <img 
-      src="https://i.imgur.com/YjYEYq3.png" 
+      src="https://i.imgur.com/29gXrPb.png" 
       alt="CYANIS"
       className={className}
     />

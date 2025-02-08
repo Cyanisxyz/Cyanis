@@ -53,10 +53,10 @@ function App() {
             <a href="/#capabilities" className="nav-link text-white/80 hover:text-white transition-colors px-4">Capabilities</a>
             <a href="/#token" className="nav-link text-white/80 hover:text-white transition-colors px-4">Token</a>
             <div className="h-4 w-px bg-white/20" />
-            <a href="https://github.com/Cyanisxyz/Cyanis" className="social-link text-white/80 hover:text-white transition-all p-2 hover:-translate-y-0.5">
+            <a href="https://github.com/Cyanisxyz/Cyanis" target="_blank" rel="noopener noreferrer" className="social-link text-white/80 hover:text-white transition-all p-2 hover:-translate-y-0.5">
               <Github className="w-4 h-4 social-icon" />
             </a>
-            <a href="https://x.com/cyanisxyz" className="social-link text-white/80 hover:text-white transition-all p-2 hover:-translate-y-0.5">
+            <a href="https://x.com/cyanisxyz" target="_blank" rel="noopener noreferrer" className="social-link text-white/80 hover:text-white transition-all p-2 hover:-translate-y-0.5">
               <Twitter className="w-4 h-4 social-icon" />
             </a>
           </div>
@@ -86,10 +86,10 @@ function App() {
                   An advanced AI platform revolutionizing human-machine interactions—bridging intelligence and innovation.
                 </p>
                 <div className="flex space-x-4 mt-4">
-                  <a href="https://github.com/Cyanisxyz/Cyanis" className="text-white/60 hover:text-white transition-colors">
+                  <a href="https://github.com/Cyanisxyz/Cyanis" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white transition-colors">
                     <Github className="w-5 h-5" />
                   </a>
-                  <a href="https://x.com/cyanisxyz" className="text-white/60 hover:text-white transition-colors">
+                  <a href="https://x.com/cyanisxyz" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white transition-colors">
                     <Twitter className="w-5 h-5" />
                   </a>
                 </div>
